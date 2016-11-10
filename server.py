@@ -1,44 +1,46 @@
 import sys
-import socket
-import Queue
+from socket import *
+from Queue import Queue
 from threading import Thread
 
 
 
-def workers(swimmer)
+def _workers(swimmer):
 
 	while True:
 
-		socket=swimmer.get();
-		address
+		work_socket=swimmer.get()
+		work_address=swimmer.get()
 		active=True
-		while active
+		while active:
 			receive=client_socket.recv(1024)
-
-
-			if data=="KILL_SERVICE\n"
-				socket.kill()
+			if receive=="KILL_SERVICE\n":
+				socket.close()
 				active=False
-
-			elif data[:4]=="HELO":
-				msg=data+"IP:"[ip address]"\nPort:"[port number]"\nStudentID:13319829\n"
-	
-			else
-
+			elif receive[:4]=="HELO":
+				msg=data+"IP:"+work_address+"\nPort:"+work_socket+"\nStudentID:13319829\n"
+				work_socket.sendall(msg)	
+			else:
+				message=receive[:-2].upper()
+				work_socket.sendall(message)				
 			
-	socket.close()
+	work_socket.close()
 
-def server(hostname,port_number,numb_of_workers)
-	sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-	sock=socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+def _server(hostname,port_number,numb_of_workers):
+	sock=socket(AF_INET,SOCK_STREAM)
+	sock.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
 	sock.bind((hostname,port_number))
-	sock.listen(5)	
+	sock.listen(10)	
 	pool=Queue(numb_of_workers)
-	
-	for i in range(numb_of_workers)
-		thread= Thread(target=worker,args=(pool,))
+
+	for i in range(numb_of_workers):
+		thread= Thread(target=_workers,args=(pool,))
 		thread.daemon=True
 		thread.start()
+	while True:
+		client_socket,address=sock.accept()
+		pool.put(client_socket)
+		pool.put(address)
 
 if __name__ == '__main__':
-	server(sys.argv[1],int(sys.argv[2]),int(sys.argv[3]))
+	_server(sys.argv[1],int(sys.argv[2]),int(sys.argv[3]))
