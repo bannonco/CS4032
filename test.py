@@ -13,11 +13,11 @@ def sockets(hostname,port_number,msg):
 	while True:
 		sock.send(msg)
 		ret_msg=sock.recv(2048)
-		print "Received message:"+repr(ret_msg)
+		print "Received message:"+ret_msg
 
 	sock.close()
 
-for x in range(7):
+for x in range(2):
 	pool=thread.start_new(sockets,(sys.argv[1],int(sys.argv[2]),sys.argv[3]))
 
 time.sleep(10)
