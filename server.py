@@ -23,7 +23,7 @@ def _workers(swimmer):
 				active=False
 			elif receive[:4]=="HELO":
 				print "HELO Received: "+receive
-				msg="%s\nIP:%s\nPort:%s\nStudentID:13319829\n"%(receive,str(gethostbyname(gethostname())),int(sys.argv[2]))
+				msg="%sIP:%s\nPort:%s\nStudentID:13319829\n"%(receive,str(gethostbyname(gethostname())),int(sys.argv[2]))
 				work_socket.sendall(msg)
 				print "HELO Sent"	
 			else:
