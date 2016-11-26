@@ -1,4 +1,4 @@
-import sys
+import sys, os, signal
 from socket import *
 from Queue import Queue
 from threading import Thread
@@ -16,8 +16,9 @@ def _workers(swimmer):
 			if receive[:12]=="KILL_SERVICE":
 				print "Killing!!"
 				work_socket.sendall("KILLED!!")
-				work_socket.shutdown(SHUT_RDWR)
-				work_socket.close()
+				#work_socket.shutdown(SHUT_RDWR)
+				#work_socket.close()
+				work_socket.sendall(kill())
 				active=False
 			elif receive[:4]=="HELO":
 				print "HELO Received: "+receive
@@ -28,7 +29,8 @@ def _workers(swimmer):
 				print "other Received:"+receive
 				message=receive[:-2].upper()
 				work_socket.sendall(message)							
-	
+
+	os.kill(os.getpid(),signal.SIGINT)
 	work_socket.close()
 
 def _server(hostname,port_number,numb_of_workers):
