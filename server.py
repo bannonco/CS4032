@@ -3,9 +3,6 @@ from socket import *
 from Queue import Queue
 from threading import Thread
 
-
-#portnumber=0
-
 def _workers(swimmer):
 
 	while True:
@@ -19,6 +16,7 @@ def _workers(swimmer):
 			if receive[:12]=="KILL_SERVICE":
 				print "Killing!!"
 				work_socket.sendall("KILLED!!")
+				work_socket.shutdown(SHUT_RDWR)
 				work_socket.close()
 				active=False
 			elif receive[:4]=="HELO":
@@ -56,4 +54,3 @@ def _server(hostname,port_number,numb_of_workers):
 
 if __name__ == '__main__':
 	_server(sys.argv[1],int(sys.argv[2]),int(sys.argv[3]))
-	#global portnumber=int(sys.argv
