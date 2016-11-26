@@ -10,7 +10,7 @@ def _workers(swimmer):
 		work_socket=swimmer.get()
 		work_address=swimmer.get()
 		active=True
-		while active==True:
+		while active:
 			receive=work_socket.recv(2048)
 			if not receive: break
 			if receive[:12]=="KILL_SERVICE":
@@ -18,7 +18,6 @@ def _workers(swimmer):
 				work_socket.sendall("KILLED!!")
 				#work_socket.shutdown(SHUT_RDWR)
 				#work_socket.close()
-				work_socket.sendall(kill())
 				active=False
 			elif receive[:4]=="HELO":
 				print "HELO Received: "+receive
@@ -31,6 +30,7 @@ def _workers(swimmer):
 				work_socket.sendall(message)							
 
 	os.kill(os.getpid(),signal.SIGINT)
+	work_socket.shutdown(SHUT_RDWR)
 	work_socket.close()
 
 def _server(hostname,port_number,numb_of_workers):
